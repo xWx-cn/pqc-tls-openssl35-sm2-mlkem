@@ -322,6 +322,7 @@ extern const OSSL_DISPATCH ossl_ed448_keymgmt_functions[];
 #endif
 #ifndef OPENSSL_NO_SM2
 extern const OSSL_DISPATCH ossl_sm2_keymgmt_functions[];
+extern const OSSL_DISPATCH ossl_curve_sm2_keymgmt_functions[];
 #endif
 #endif
 extern const OSSL_DISPATCH ossl_ml_dsa_44_keymgmt_functions[];
@@ -330,6 +331,7 @@ extern const OSSL_DISPATCH ossl_ml_dsa_87_keymgmt_functions[];
 #ifndef OPENSSL_NO_ML_KEM
 extern const OSSL_DISPATCH ossl_ml_kem_512_keymgmt_functions[];
 extern const OSSL_DISPATCH ossl_ml_kem_768_keymgmt_functions[];
+extern const OSSL_DISPATCH ossl_project_mlkem768_keymgmt_functions[];
 extern const OSSL_DISPATCH ossl_ml_kem_1024_keymgmt_functions[];
 #ifndef OPENSSL_NO_EC
 #ifndef OPENSSL_NO_ECX
@@ -355,6 +357,7 @@ extern const OSSL_DISPATCH ossl_slh_dsa_shake_256s_keymgmt_functions[];
 extern const OSSL_DISPATCH ossl_slh_dsa_shake_256f_keymgmt_functions[];
 #endif /* OPENSSL_NO_SLH_DSA */
 
+extern const OSSL_DISPATCH ossl_project_sm2_mlkem_keymgmt_functions[];
 /* Key Exchange */
 extern const OSSL_DISPATCH ossl_dh_keyexch_functions[];
 #ifndef OPENSSL_NO_EC
@@ -454,11 +457,13 @@ extern const OSSL_DISPATCH ossl_ecx_asym_kem_functions[];
 #endif
 #ifndef OPENSSL_NO_ML_KEM
 extern const OSSL_DISPATCH ossl_ml_kem_asym_kem_functions[];
+extern const OSSL_DISPATCH ossl_project_mlkem768_kem_functions[];
 #ifndef OPENSSL_NO_EC
 extern const OSSL_DISPATCH ossl_mlx_kem_asym_kem_functions[];
 #endif
 #endif
 
+extern const OSSL_DISPATCH ossl_project_sm2_mlkem_kem_functions[];
 /* Encoders */
 extern const OSSL_DISPATCH ossl_rsa_to_PKCS1_der_encoder_functions[];
 extern const OSSL_DISPATCH ossl_rsa_to_PKCS1_pem_encoder_functions[];

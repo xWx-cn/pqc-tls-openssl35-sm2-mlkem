@@ -512,6 +512,7 @@ static const OSSL_ALGORITHM deflt_asym_kem[] = {
     { PROV_NAMES_ML_KEM_512, "provider=default", ossl_ml_kem_asym_kem_functions },
     { PROV_NAMES_ML_KEM_768, "provider=default", ossl_ml_kem_asym_kem_functions },
     { PROV_NAMES_ML_KEM_1024, "provider=default", ossl_ml_kem_asym_kem_functions },
+    { PROV_NAMES_ML_KEM_768_PROJECT, "provider=default", ossl_project_mlkem768_kem_functions },
 #if !defined(OPENSSL_NO_ECX)
     { "X25519MLKEM768", "provider=default", ossl_mlx_kem_asym_kem_functions },
     { "X448MLKEM1024", "provider=default", ossl_mlx_kem_asym_kem_functions },
@@ -521,7 +522,8 @@ static const OSSL_ALGORITHM deflt_asym_kem[] = {
     { "SecP384r1MLKEM1024", "provider=default", ossl_mlx_kem_asym_kem_functions },
 #endif
 #endif
-    { NULL, NULL, NULL }
+        { "curveSM2MLKEM768", "provider=default", ossl_project_sm2_mlkem_kem_functions, "Project curveSM2 + ML-KEM-768 hybrid KEM" },
+{ NULL, NULL, NULL }
 };
 
 static const OSSL_ALGORITHM deflt_keymgmt[] = {
@@ -586,6 +588,9 @@ static const OSSL_ALGORITHM deflt_keymgmt[] = {
 #ifndef OPENSSL_NO_SM2
     { PROV_NAMES_SM2, "provider=default", ossl_sm2_keymgmt_functions,
         PROV_DESCS_SM2 },
+    { PROV_NAMES_curveSM2, "provider=default",
+        ossl_curve_sm2_keymgmt_functions,
+        PROV_DESCS_curveSM2 },
 #endif
 #ifndef OPENSSL_NO_ML_KEM
     { PROV_NAMES_ML_KEM_512, "provider=default", ossl_ml_kem_512_keymgmt_functions,
@@ -594,6 +599,9 @@ static const OSSL_ALGORITHM deflt_keymgmt[] = {
         PROV_DESCS_ML_KEM_768 },
     { PROV_NAMES_ML_KEM_1024, "provider=default", ossl_ml_kem_1024_keymgmt_functions,
         PROV_DESCS_ML_KEM_1024 },
+    { PROV_NAMES_ML_KEM_768_PROJECT, "provider=default",
+        ossl_project_mlkem768_keymgmt_functions,
+        PROV_DESCS_ML_KEM_768_PROJECT },
 #if !defined(OPENSSL_NO_ECX)
     { PROV_NAMES_X25519MLKEM768, "provider=default", ossl_mlx_x25519_kem_kmgmt_functions,
         PROV_DESCS_X25519MLKEM768 },
@@ -633,7 +641,8 @@ static const OSSL_ALGORITHM deflt_keymgmt[] = {
     { PROV_NAMES_SLH_DSA_SHAKE_256F, "provider=default", ossl_slh_dsa_shake_256f_keymgmt_functions,
         PROV_DESCS_SLH_DSA_SHAKE_256F },
 #endif /* OPENSSL_NO_SLH_DSA */
-    { NULL, NULL, NULL }
+        { "curveSM2MLKEM768", "provider=default", ossl_project_sm2_mlkem_keymgmt_functions, "Project curveSM2 + ML-KEM-768 hybrid key management" },
+{ NULL, NULL, NULL }
 };
 
 static const OSSL_ALGORITHM deflt_skeymgmt[] = {

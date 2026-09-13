@@ -91,6 +91,8 @@ static const TLS_GROUP_CONSTANTS group_list[] = {
     /* 41 */ { OSSL_TLS_GROUP_ID_X25519MLKEM768, ML_KEM_768_SECBITS, TLS1_3_VERSION, 0, -1, -1, 1 },
     /* 42 */ { OSSL_TLS_GROUP_ID_SecP256r1MLKEM768, ML_KEM_768_SECBITS, TLS1_3_VERSION, 0, -1, -1, 1 },
     /* 43 */ { OSSL_TLS_GROUP_ID_SecP384r1MLKEM1024, ML_KEM_1024_SECBITS, TLS1_3_VERSION, 0, -1, -1, 1 },
+    /* 44 */ { OSSL_TLS_GROUP_ID_curveSM2, 128, TLS1_3_VERSION, 0, -1, -1, 0 },
+    /* 45 */ { OSSL_TLS_GROUP_ID_curveSM2MLKEM768, ML_KEM_768_SECBITS, TLS1_3_VERSION, 0, -1, -1, 1 },
 };
 
 #define TLS_GROUP_ENTRY(tlsname, realname, algorithm, idx)              \
@@ -151,6 +153,10 @@ static const TLS_GROUP_CONSTANTS group_list[] = {
  * and those added later (FFDHE, brainpool, ML-KEM)
  */
 static const OSSL_PARAM param_group_list[][11] = {
+#if !defined(OPENSSL_NO_EC) && !defined(OPENSSL_NO_ML_KEM)
+    TLS_GROUP_ENTRY("curveSM2MLKEM768", "", "curveSM2MLKEM768", 45),
+#endif
+
 #ifndef OPENSSL_NO_EC
 #if !defined(OPENSSL_NO_ML_KEM)
 #if !defined(OPENSSL_NO_ECX)
@@ -187,6 +193,9 @@ static const OSSL_PARAM param_group_list[][11] = {
     TLS_GROUP_ENTRY("brainpoolP256r1tls13", "brainpoolP256r1", "EC", 30),
     TLS_GROUP_ENTRY("brainpoolP384r1tls13", "brainpoolP384r1", "EC", 31),
     TLS_GROUP_ENTRY("brainpoolP512r1tls13", "brainpoolP512r1", "EC", 32),
+#ifndef OPENSSL_NO_SM2
+    TLS_GROUP_ENTRY("curveSM2", "SM2", "curveSM2", 44),
+#endif
 #endif
 #ifndef OPENSSL_NO_ML_KEM
     TLS_GROUP_ENTRY("SecP256r1MLKEM768", "", "SecP256r1MLKEM768", 42),

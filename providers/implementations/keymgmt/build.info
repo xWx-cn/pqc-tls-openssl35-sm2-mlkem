@@ -46,6 +46,7 @@ IF[{- !$disabled{'ml-kem'} -}]
     SOURCE[$TLS_ML_KEM_HYBRID_GOAL]=mlx_kmgmt.c
   ENDIF
   SOURCE[$ML_KEM_GOAL]=ml_kem_kmgmt.c
+  SOURCE[../../libdefault.a]=mlkem_project_kmgmt.c
 ENDIF
 
 SOURCE[$RSA_GOAL]=rsa_kmgmt.c
@@ -63,3 +64,6 @@ ENDIF
 IF[{- !$disabled{'slh-dsa'} -}]
   SOURCE[$SLH_DSA_GOAL]=slh_dsa_kmgmt.c
 ENDIF
+
+# Project SM2 + ML-KEM hybrid
+SOURCE[../../libdefault.a]=sm2_mlkem_project_kmgmt.c

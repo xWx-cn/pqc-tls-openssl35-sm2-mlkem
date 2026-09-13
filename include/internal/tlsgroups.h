@@ -51,6 +51,18 @@
 #define OSSL_TLS_GROUP_ID_gc512A 0x0026
 #define OSSL_TLS_GROUP_ID_gc512B 0x0027
 #define OSSL_TLS_GROUP_ID_gc512C 0x0028
+#define OSSL_TLS_GROUP_ID_curveSM2 0x0029
+
+/*
+ * Project-defined experimental GM/PQ TLS Supported Group range.
+ *
+ * Course requirement:
+ *     0xFE00 - 0xFEFF
+ *
+ * Do not describe this as an IANA allocation.
+ */
+#define OSSL_TLS_GROUP_ID_GM_PQ_BEGIN 0xFE00
+#define OSSL_TLS_GROUP_ID_GM_PQ_END   0xFEFF
 #define OSSL_TLS_GROUP_ID_ffdhe2048 0x0100
 #define OSSL_TLS_GROUP_ID_ffdhe3072 0x0101
 #define OSSL_TLS_GROUP_ID_ffdhe4096 0x0102
@@ -62,5 +74,14 @@
 #define OSSL_TLS_GROUP_ID_SecP256r1MLKEM768 0x11EB
 #define OSSL_TLS_GROUP_ID_X25519MLKEM768 0x11EC
 #define OSSL_TLS_GROUP_ID_SecP384r1MLKEM1024 0x11ED
+
+
+/*
+ * Project-defined SM/PQ experimental TLS NamedGroup range.
+ * Course project allocation: 0xFE00-0xFEFF.
+ */
+#define OSSL_TLS_GROUP_ID_PROJECT_SM_PQC_MIN 0xFE00
+#define OSSL_TLS_GROUP_ID_curveSM2MLKEM768   0xFE00
+#define OSSL_TLS_GROUP_ID_PROJECT_SM_PQC_MAX 0xFEFF
 
 #endif

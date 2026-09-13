@@ -21,6 +21,10 @@ IF[{- !$disabled{'ml-kem'} -}]
     SOURCE[$TLS_ML_KEM_HYBRID_GOAL]=mlx_kem.c
   ENDIF
   SOURCE[$ML_KEM_GOAL] = ml_kem_kem.c
+  SOURCE[../../libdefault.a] = mlkem_project_kem.c
 ENDIF
 
 SOURCE[$TEMPLATE_KEM_GOAL]=template_kem.c
+
+# Project SM2 + ML-KEM hybrid
+SOURCE[../../libdefault.a]=sm2_mlkem_project_kem.c

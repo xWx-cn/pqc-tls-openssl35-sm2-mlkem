@@ -1,0 +1,6 @@
+LIBS=../../libcrypto
+
+SOURCE[../../libcrypto]=\
+    mlkem_project_vendor.c \
+    mlkem_project.c
+INCLUDE[../../libcrypto]=vendor/mlkem

@@ -389,6 +389,8 @@
 #define PROV_DESCS_RSA_PSS "OpenSSL RSA-PSS implementation"
 #define PROV_NAMES_SM2 "SM2:1.2.156.10197.1.301"
 #define PROV_DESCS_SM2 "OpenSSL SM2 implementation"
+#define PROV_NAMES_curveSM2 "curveSM2"
+#define PROV_DESCS_curveSM2 "Project RFC8998 curveSM2 ECDHE implementation"
 #define PROV_NAMES_ML_DSA_44 "ML-DSA-44:MLDSA44:2.16.840.1.101.3.4.3.17:id-ml-dsa-44"
 #define PROV_DESCS_ML_DSA_44 "OpenSSL ML-DSA-44 implementation"
 #define PROV_NAMES_ML_DSA_65 "ML-DSA-65:MLDSA65:2.16.840.1.101.3.4.3.18:id-ml-dsa-65"
@@ -399,6 +401,8 @@
 #define PROV_DESCS_ML_KEM_512 "OpenSSL ML-KEM-512 implementation"
 #define PROV_NAMES_ML_KEM_768 "ML-KEM-768:MLKEM768:id-alg-ml-kem-768:2.16.840.1.101.3.4.4.2"
 #define PROV_DESCS_ML_KEM_768 "OpenSSL ML-KEM-768 implementation"
+#define PROV_NAMES_ML_KEM_768_PROJECT "ML-KEM-768-PROJECT"
+#define PROV_DESCS_ML_KEM_768_PROJECT "Project portable ML-KEM-768 implementation"
 #define PROV_NAMES_ML_KEM_1024 "ML-KEM-1024:MLKEM1024:id-alg-ml-kem-1024:2.16.840.1.101.3.4.4.3"
 #define PROV_DESCS_ML_KEM_1024 "OpenSSL ML-KEM-1024 implementation"
 #define PROV_NAMES_X25519MLKEM768 "X25519MLKEM768"
@@ -409,6 +413,10 @@
 #define PROV_DESCS_SecP256r1MLKEM768 "P-256+ML-KEM-768 TLS hybrid implementation"
 #define PROV_NAMES_SecP384r1MLKEM1024 "SecP384r1MLKEM1024"
 #define PROV_DESCS_SecP384r1MLKEM1024 "P-384+ML-KEM-1024 TLS hybrid implementation"
+#define PROV_NAMES_CURVESM2MLKEM768 "curveSM2MLKEM768"
+#define PROV_DESCS_CURVESM2MLKEM768 \
+    "Project curveSM2 + ML-KEM-768 TLS hybrid implementation"
+
 #define PROV_NAMES_SLH_DSA_SHA2_128S "SLH-DSA-SHA2-128s:id-slh-dsa-sha2-128s:2.16.840.1.101.3.4.3.20"
 #define PROV_NAMES_SLH_DSA_SHA2_128F "SLH-DSA-SHA2-128f:id-slh-dsa-sha2-128f:2.16.840.1.101.3.4.3.21"
 #define PROV_NAMES_SLH_DSA_SHA2_192S "SLH-DSA-SHA2-192s:id-slh-dsa-sha2-192s:2.16.840.1.101.3.4.3.22"
