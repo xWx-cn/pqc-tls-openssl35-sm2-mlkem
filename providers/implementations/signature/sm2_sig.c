@@ -17,6 +17,7 @@
 #include <openssl/crypto.h>
 #include <openssl/core_dispatch.h>
 #include <openssl/core_names.h>
+#include <openssl/prov_ssl.h>
 #include <openssl/dsa.h>
 #include <openssl/params.h>
 #include <openssl/evp.h>
@@ -438,34 +439,87 @@ static const OSSL_PARAM *sm2sig_gettable_ctx_params(ossl_unused void *vpsm2ctx,
     return known_gettable_ctx_params;
 }
 
-static int sm2sig_set_ctx_params(void *vpsm2ctx, const OSSL_PARAM params[])
+static int sm2sig_set_ctx_params(void *vpsm2ctx,
+                                  const OSSL_PARAM params[])
 {
+    /*
+     * RFC 8998 section 3.2.1:
+     *
+     * TLS 1.3 CertificateVerify uses the following SM2 ID:
+     *
+     *     TLSv1.3+GM+Cipher+Suite
+     *
+     * Certificate signature verification remains a separate use case.
+     */
+    static const unsigned char sm2_tls_id[] =
+        "TLSv1.3+GM+Cipher+Suite";
+
     PROV_SM2_CTX *psm2ctx = (PROV_SM2_CTX *)vpsm2ctx;
     const OSSL_PARAM *p;
     size_t mdsize;
 
     if (psm2ctx == NULL)
         return 0;
+
     if (ossl_param_is_empty(params))
         return 1;
 
-    p = OSSL_PARAM_locate_const(params, OSSL_PKEY_PARAM_DIST_ID);
+    /*
+     * Explicit distid has priority.
+     */
+    p = OSSL_PARAM_locate_const(
+        params,
+        OSSL_PKEY_PARAM_DIST_ID);
+
     if (p != NULL) {
         void *tmp_id = NULL;
         size_t tmp_idlen = 0;
 
-        /*
-         * If the 'z' digest has already been computed, the ID is set too late
-         */
         if (!psm2ctx->flag_compute_z_digest)
             return 0;
 
         if (p->data_size != 0
-            && !OSSL_PARAM_get_octet_string(p, &tmp_id, 0, &tmp_idlen))
+            && !OSSL_PARAM_get_octet_string(
+                   p,
+                   &tmp_id,
+                   0,
+                   &tmp_idlen))
             return 0;
+
         OPENSSL_free(psm2ctx->id);
+
         psm2ctx->id = tmp_id;
         psm2ctx->id_len = tmp_idlen;
+
+    } else {
+        unsigned int tlsver = 0;
+
+        p = OSSL_PARAM_locate_const(
+            params,
+            OSSL_SIGNATURE_PARAM_TLS_VERSION);
+
+        if (p != NULL) {
+            if (!psm2ctx->flag_compute_z_digest
+                || !OSSL_PARAM_get_uint(p, &tlsver))
+                return 0;
+
+            if (tlsver == TLS1_3_VERSION) {
+                unsigned char *tmp;
+
+                tmp = OPENSSL_memdup(
+                    sm2_tls_id,
+                    sizeof(sm2_tls_id) - 1);
+
+                if (tmp == NULL)
+                    return 0;
+
+                OPENSSL_free(psm2ctx->id);
+
+                psm2ctx->id = tmp;
+                psm2ctx->id_len =
+                    sizeof(sm2_tls_id) - 1;
+            }
+        }
     }
 
     /*
@@ -498,6 +552,7 @@ static const OSSL_PARAM known_settable_ctx_params[] = {
     OSSL_PARAM_size_t(OSSL_SIGNATURE_PARAM_DIGEST_SIZE, NULL),
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_DIGEST, NULL, 0),
     OSSL_PARAM_octet_string(OSSL_PKEY_PARAM_DIST_ID, NULL, 0),
+    OSSL_PARAM_uint(OSSL_SIGNATURE_PARAM_TLS_VERSION, NULL),
     OSSL_PARAM_END
 };
 

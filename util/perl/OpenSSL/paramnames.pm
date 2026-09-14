@@ -477,6 +477,7 @@ my %params = (
     'SIGNATURE_PARAM_NONCE_TYPE' =>           "nonce-type",
     'SIGNATURE_PARAM_INSTANCE' =>             "instance",
     'SIGNATURE_PARAM_CONTEXT_STRING' =>       "context-string",
+    'SIGNATURE_PARAM_TLS_VERSION' =>         "tls-version",
     'SIGNATURE_PARAM_FIPS_DIGEST_CHECK' =>    '*PKEY_PARAM_FIPS_DIGEST_CHECK',
     'SIGNATURE_PARAM_FIPS_VERIFY_MESSAGE' =>  'verify-message',
     'SIGNATURE_PARAM_FIPS_KEY_CHECK' =>       '*PKEY_PARAM_FIPS_KEY_CHECK',

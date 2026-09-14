@@ -281,21 +281,31 @@ static int tls_group_capability(OSSL_CALLBACK *cb, void *arg)
 
 /* --------------------------------------------------------------- */
 
-#if !defined(OPENSSL_NO_ML_DSA)
+#if !defined(OPENSSL_NO_ML_DSA) \
+    || (!defined(FIPS_MODULE) \
+        && !defined(OPENSSL_NO_SM2) \
+        && !defined(OPENSSL_NO_SM3))
 
 typedef struct tls_sigalg_constants_st {
     unsigned int code_point;
-    unsigned int sec_bits; /* Bits of security */
-    int min_tls; /* Minimum TLS version, -1 unsupported */
-    int max_tls; /* Maximum TLS version (or 0 for undefined) */
-    int min_dtls; /* Minimum DTLS version, -1 unsupported */
-    int max_dtls; /* Maximum DTLS version (or 0 for undefined) */
+    unsigned int sec_bits;
+    int min_tls;
+    int max_tls;
+    int min_dtls;
+    int max_dtls;
 } TLS_SIGALG_CONSTANTS;
 
-static const TLS_SIGALG_CONSTANTS sigalg_constants_list[3] = {
+/*
+ * Keep constant table indices independent of build options.
+ *
+ * 0..2: OpenSSL 3.5 ML-DSA entries
+ * 3:    RFC 8998 sm2sig_sm3
+ */
+static const TLS_SIGALG_CONSTANTS sigalg_constants_list[] = {
     { 0x0904, 128, TLS1_3_VERSION, 0, -1, -1 },
     { 0x0905, 192, TLS1_3_VERSION, 0, -1, -1 },
     { 0x0906, 256, TLS1_3_VERSION, 0, -1, -1 },
+    { 0x0708, 128, TLS1_3_VERSION, 0, -1, -1 },
 };
 
 #define TLS_SIGALG_ENTRY(tlsname, algorithm, oid, idx)               \
@@ -322,21 +332,57 @@ static const TLS_SIGALG_CONSTANTS sigalg_constants_list[3] = {
     }
 
 static const OSSL_PARAM param_sigalg_list[][10] = {
-    TLS_SIGALG_ENTRY("mldsa44", "ML-DSA-44", "2.16.840.1.101.3.4.3.17", 0),
-    TLS_SIGALG_ENTRY("mldsa65", "ML-DSA-65", "2.16.840.1.101.3.4.3.18", 1),
-    TLS_SIGALG_ENTRY("mldsa87", "ML-DSA-87", "2.16.840.1.101.3.4.3.19", 2),
+#ifndef OPENSSL_NO_ML_DSA
+    TLS_SIGALG_ENTRY(
+        "mldsa44",
+        "ML-DSA-44",
+        "2.16.840.1.101.3.4.3.17",
+        0),
+    TLS_SIGALG_ENTRY(
+        "mldsa65",
+        "ML-DSA-65",
+        "2.16.840.1.101.3.4.3.18",
+        1),
+    TLS_SIGALG_ENTRY(
+        "mldsa87",
+        "ML-DSA-87",
+        "2.16.840.1.101.3.4.3.19",
+        2),
+#endif
+
+#if !defined(FIPS_MODULE) \
+    && !defined(OPENSSL_NO_SM2) \
+    && !defined(OPENSSL_NO_SM3)
+    /*
+     * RFC 8998:
+     *
+     * SignatureScheme sm2sig_sm3 = 0x0708
+     * SM2-with-SM3 OID = 1.2.156.10197.1.501
+     */
+    TLS_SIGALG_ENTRY(
+        "sm2sig_sm3",
+        "SM2",
+        "1.2.156.10197.1.501",
+        3),
+#endif
 };
-#endif /* OPENSSL_NO_ML_DSA */
+
+#endif
 
 static int tls_sigalg_capability(OSSL_CALLBACK *cb, void *arg)
 {
-#if !defined(OPENSSL_NO_ML_DSA)
+#if !defined(OPENSSL_NO_ML_DSA) \
+    || (!defined(FIPS_MODULE) \
+        && !defined(OPENSSL_NO_SM2) \
+        && !defined(OPENSSL_NO_SM3))
+
     size_t i;
 
     for (i = 0; i < OSSL_NELEM(param_sigalg_list); i++)
         if (!cb(param_sigalg_list[i], arg))
             return 0;
 #endif
+
     return 1;
 }
 

@@ -614,7 +614,8 @@ static const ssl_trace_tbl ssl_sigalg_tbl[] = {
      */
     { 0x0904, "mldsa44" },
     { 0x0905, "mldsa65" },
-    { 0x0906, "mldsa87" }
+    { 0x0906, "mldsa87" },
+    { 0x0708, "sm2sig_sm3" }
 };
 
 static const ssl_trace_tbl ssl_ctype_tbl[] = {

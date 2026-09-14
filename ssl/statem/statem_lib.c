@@ -18,6 +18,8 @@
 #include <openssl/buffer.h>
 #include <openssl/objects.h>
 #include <openssl/evp.h>
+#include <openssl/core_names.h>
+#include <openssl/params.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
 #include <openssl/trace.h>
@@ -316,6 +318,7 @@ CON_FUNC_RETURN tls_construct_cert_verify(SSL_CONNECTION *s, WPACKET *pkt)
     const EVP_MD *md = NULL;
     EVP_MD_CTX *mctx = NULL;
     EVP_PKEY_CTX *pctx = NULL;
+    OSSL_PARAM params[3], *paramp = params;
     size_t hdatalen = 0, siglen = 0;
     void *hdata;
     unsigned char *sig = NULL;
@@ -351,10 +354,26 @@ CON_FUNC_RETURN tls_construct_cert_verify(SSL_CONNECTION *s, WPACKET *pkt)
         goto err;
     }
 
+    /*
+     * Pass the negotiated TLS version to signature providers.
+     * SM2 uses this to select the RFC 8998 TLS 1.3 ID.
+     */
+    *paramp++ = OSSL_PARAM_construct_int(
+        OSSL_SIGNATURE_PARAM_TLS_VERSION,
+        &s->version);
+
+    if (md != NULL)
+        *paramp++ = OSSL_PARAM_construct_utf8_string(
+            OSSL_SIGNATURE_PARAM_DIGEST,
+            (char *)EVP_MD_get0_name(md),
+            0);
+
+    *paramp = OSSL_PARAM_construct_end();
+
     if (EVP_DigestSignInit_ex(mctx, &pctx,
             md == NULL ? NULL : EVP_MD_get0_name(md),
             sctx->libctx, sctx->propq, pkey,
-            NULL)
+            params)
         <= 0) {
         SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_EVP_LIB);
         goto err;
@@ -454,6 +473,7 @@ MSG_PROCESS_RETURN tls_process_cert_verify(SSL_CONNECTION *s, PACKET *pkt)
     unsigned char tls13tbs[TLS13_TBS_PREAMBLE_SIZE + EVP_MAX_MD_SIZE];
     EVP_MD_CTX *mctx = EVP_MD_CTX_new();
     EVP_PKEY_CTX *pctx = NULL;
+    OSSL_PARAM params[3], *paramp = params;
     SSL_CTX *sctx = SSL_CONNECTION_GET_CTX(s);
 
     if (mctx == NULL) {
@@ -536,10 +556,26 @@ MSG_PROCESS_RETURN tls_process_cert_verify(SSL_CONNECTION *s, PACKET *pkt)
     OSSL_TRACE1(TLS, "Using client verify alg %s\n",
         md == NULL ? "n/a" : EVP_MD_get0_name(md));
 
+    /*
+     * Pass TLS version to the signature provider for
+     * RFC 8998 CertificateVerify processing.
+     */
+    *paramp++ = OSSL_PARAM_construct_int(
+        OSSL_SIGNATURE_PARAM_TLS_VERSION,
+        &s->version);
+
+    if (md != NULL)
+        *paramp++ = OSSL_PARAM_construct_utf8_string(
+            OSSL_SIGNATURE_PARAM_DIGEST,
+            (char *)EVP_MD_get0_name(md),
+            0);
+
+    *paramp = OSSL_PARAM_construct_end();
+
     if (EVP_DigestVerifyInit_ex(mctx, &pctx,
             md == NULL ? NULL : EVP_MD_get0_name(md),
             sctx->libctx, sctx->propq, pkey,
-            NULL)
+            params)
         <= 0) {
         SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_EVP_LIB);
         goto err;
